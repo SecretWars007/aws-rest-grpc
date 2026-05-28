@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  m2-grpc:
+    build:
+      context: .
+      dockerfile: m2-grpc/Dockerfile
+    container_name: yape-m2-grpc
+    environment:
+      - PORT=50051
+    ports:
+      - "50051:50051"
+    networks:
+      - yape-network
+
+  m1-rest:
+    build:
+      context: .
+      dockerfile: m1-rest/Dockerfile
+    container_name: yape-m1-rest
+    environment:
+      - PORT=3000
+      - GRPC_HOST=m2-grpc
+      - GRPC_PORT=50051
+    ports:
+      - "3001:3000"
+    depends_on:
+      - m2-grpc
+    networks:
+      - yape-network
+
+networks:
+  yape-network:
+    driver: bridge

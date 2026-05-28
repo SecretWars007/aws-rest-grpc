@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: m1-rest
+  namespace: yape-app
+  labels:
+    app: m1-rest
+    app.kubernetes.io/name: yape-m1-rest
+    app.kubernetes.io/part-of: yape-system
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: m1-rest
+  template:
+    metadata:
+      labels:
+        app: m1-rest
+    spec:
+      containers:
+        - name: m1-rest
+          image: aws-rest-grpc-m1-rest:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: GRPC_HOST
+              value: "m2-grpc"
+            - name: GRPC_PORT
+              value: "50051"
+            - name: PORT
+              value: "3000"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: m1-rest
+  namespace: yape-app
+  labels:
+    app: m1-rest
+spec:
+  type: NodePort
+  selector:
+    app: m1-rest
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 32001
+      protocol: TCP
+      name: http

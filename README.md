@@ -340,3 +340,69 @@ kubectl delete -f k8s/
 kubectl delete -f k8s/namespace.yaml
 ```
 Esto removerá el namespace `yape-app` liberando todos los recursos de computación asignados.
+
+---
+
+## 💻 3. Frontend Web en Angular (Interfaz Premium)
+
+Hemos diseñado e implementado una **interfaz web premium y profesional** para el ecosistema Yape BCP utilizando **Angular v19** (con la convención moderna de nombres de archivos 2025 y reactividad basada en **Signals**). El diseño visual sigue la estética premium **Dark Glassmorphic** generada mediante **Stitch MCP**, incorporando degradados elegantes en púrpura y verde-esmeralda, blur de fondo y bordes traslúcidos.
+
+### 🌟 Características Clave del Frontend:
+* **Dashboard Completo**: Visualización de saldo en tiempo real, estado de salud en vivo del microservicio de API (M1), barra lateral persistente y lista reactiva de movimientos recientes.
+* **Módulo de Envío ("Yapear")**: Formulario interactivo con validación de expresiones regulares de teléfonos celulares peruanos (`^9\d{8}$`), control dinámico de fondos suficientes y prevención de auto-transferencia.
+* **Selección Rápida de Contactos**: Botones con atajos para rellenar instantáneamente la información de contacto de María, Carlos o Pedro.
+* **Estado Compartido y Reactivo**: Al realizar un yapeo exitoso, el saldo se descuenta automáticamente en el Dashboard y la nueva transferencia se añade a la cima del historial de transacciones.
+* **Conectividad REST en tiempo real**: Consume de forma nativa los servicios del backend REST Gateway.
+
+---
+
+### 🏃‍♂️ Ejecución en Desarrollo Local
+Sigue estos pasos si deseas ejecutar y depurar la aplicación en tu host fuera de Docker:
+
+```bash
+# 1. Navegar al directorio del frontend
+cd yape-frontend
+
+# 2. Iniciar el servidor de desarrollo de Angular
+npm run start
+```
+* La aplicación se compilará y estará disponible en **`http://localhost:4200`** en tu navegador.
+* El frontend se comunicará directamente con el REST API de M1 en `http://localhost:3001` gracias al middleware CORS configurado.
+
+---
+
+### 🐳 Ejecución con Docker Compose
+La orquestación de Docker Compose en la raíz del proyecto ha sido actualizada para compilar y servir de forma automatizada la aplicación web:
+
+```bash
+# Levantar todo el ecosistema (Core gRPC, Gateway REST, y Frontend Web)
+docker-compose up -d --build
+```
+* El frontend web de Yape estará expuesto públicamente en **`http://localhost:4200`** servido a través de **Nginx de producción**, el cual redirige la navegación SPA de forma interna y eficiente a `/index.html`.
+
+---
+
+### ☸️ Despliegue en Kubernetes (K8s)
+Hemos provisto el manifiesto declarativo `k8s/yape-frontend.yaml` para orquestar la aplicación frontend dentro de Kubernetes con réplicas redundantes para tolerancia a fallos.
+
+#### Paso A: Compilar la Imagen del Frontend en tu Clúster Local
+```bash
+# Compilar la imagen docker en el host
+docker build -t aws-rest-grpc-yape-frontend:latest -f yape-frontend/Dockerfile ./yape-frontend
+```
+
+#### Paso B: Cargar la Imagen en tu Clúster (Si aplica)
+* **Minikube**: `minikube image load aws-rest-grpc-yape-frontend:latest`
+* **Kind**: `kind load docker-image aws-rest-grpc-yape-frontend:latest`
+
+#### Paso C: Aplicar los Manifiestos
+```bash
+# Aplicar el despliegue del frontend
+kubectl apply -f k8s/yape-frontend.yaml
+```
+
+#### Paso D: Acceso y Verificación
+El servicio del frontend está expuesto como **NodePort** estático en el puerto **`32002`**.
+* Abre en tu navegador la URL: **`http://localhost:32002`** para acceder a la aplicación.
+* *Nota:* Para comunicarte con el backend REST dentro del clúster de Kubernetes, asegúrate de mantener levantado el servicio M1 en el NodePort `32001`. El frontend y backend operan sincronizados localmente a través de la redirección de puertos del clúster.
+

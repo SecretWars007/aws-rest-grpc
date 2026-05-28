@@ -1,0 +1,223 @@
+<div class="flex-1 px-8 py-12 flex flex-col justify-start max-w-5xl mx-auto w-full overflow-y-auto">
+  <!-- Back & Header -->
+  <div class="w-full mb-8">
+    <a routerLink="/" class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary mb-4 transition-colors font-bold">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+      Volver al Dashboard
+    </a>
+    
+    <h2 class="text-headline-lg font-headline font-extrabold text-on-surface flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary text-[32px]">send_to_mobile</span>
+      Yapear - Enviar Dinero
+    </h2>
+    <p class="text-body-md text-on-surface-variant mt-1">
+      Envía dinero al instante a cualquier número celular en Perú de forma 100% segura.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+    <!-- Form Card & Success Area (Span 2) -->
+    <div class="md:col-span-2 flex flex-col gap-6">
+      @if (successData(); as data) {
+        <!-- Dynamic Receipt Success Card -->
+        <div class="glass-panel border-tertiary/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden animate-[fadeIn_0.5s_ease-out]">
+          <div class="absolute -top-24 -right-24 w-64 h-64 bg-tertiary/10 rounded-full blur-[80px] pointer-events-none"></div>
+          
+          <div class="flex flex-col items-center text-center">
+            <div class="w-20 h-20 rounded-full bg-tertiary/20 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(0,224,179,0.3)]">
+              <span class="material-symbols-outlined text-tertiary text-[48px] animate-scaleUp" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            </div>
+            
+            <h3 class="text-headline-lg font-headline font-black text-tertiary mb-2">¡Yapeo Exitoso!</h3>
+            <p class="text-body-md text-on-surface-variant mb-6">El dinero ya fue enviado a su destino.</p>
+            
+            <!-- Receipt breakdown -->
+            <div class="w-full bg-surface-container/60 rounded-xl p-6 border border-outline-variant/10 text-left flex flex-col gap-4 mb-8">
+              <div class="flex justify-between items-center pb-3 border-b border-outline-variant/10">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Monto Transferido</span>
+                <span class="text-headline-md font-headline font-black text-on-surface">S/. {{ data.amount | number: '1.2-2' }}</span>
+              </div>
+              
+              <div class="flex justify-between items-center">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Destinatario</span>
+                <span class="text-label-lg font-bold text-on-surface text-right">
+                  {{ data.destination.owner }}<br>
+                  <span class="text-label-sm font-normal text-on-surface-variant">{{ data.destination.phoneNumber }}</span>
+                </span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Remitente</span>
+                <span class="text-label-lg font-bold text-on-surface text-right">
+                  {{ data.source.owner }}<br>
+                  <span class="text-label-sm font-normal text-on-surface-variant">{{ data.source.phoneNumber }}</span>
+                </span>
+              </div>
+
+              @if (data.description) {
+                <div class="flex justify-between items-center">
+                  <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Mensaje</span>
+                  <span class="text-label-lg text-on-surface font-medium text-right italic">"{{ data.description }}"</span>
+                </div>
+              }
+
+              <div class="flex justify-between items-center pt-3 border-t border-outline-variant/10">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Operación ID</span>
+                <span class="text-label-sm font-mono text-primary font-bold">{{ data.transactionId }}</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Fecha y Hora</span>
+                <span class="text-label-sm text-on-surface-variant">{{ data.timestamp | date: 'dd/MM/yyyy, HH:mm:ss' }}</span>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex gap-4 w-full">
+              <button (click)="resetTransfer()" class="flex-1 py-4 bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/20 rounded-xl font-bold text-on-surface transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Yapear de nuevo
+              </button>
+              <a routerLink="/" class="flex-1 py-4 yape-gradient hover:shadow-[0_8px_25px_rgba(116,34,132,0.4)] rounded-xl font-bold text-on-primary text-center transition-all flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[20px]">dashboard</span>
+                Ir al Dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- Transfer Form -->
+        <div class="glass-panel rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+          <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-container/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+          <form [formGroup]="transferForm" (ngSubmit)="onYapear()" class="flex flex-col gap-6 relative z-10">
+            <!-- Errors Alert -->
+            @if (errorMessage()) {
+              <div class="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl p-4 flex items-center gap-3 text-body-md animate-[fadeIn_0.3s_ease-out]">
+                <span class="material-symbols-outlined text-[24px]">error</span>
+                <span>{{ errorMessage() }}</span>
+              </div>
+            }
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Source Phone (Disabled) -->
+              <div class="flex flex-col gap-2">
+                <label class="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Celular de Origen (Mi Celular)</label>
+                <div class="relative">
+                  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">phone_iphone</span>
+                  <input formControlName="sourcePhone" class="w-full bg-surface-container/30 border border-outline-variant/10 rounded-xl py-3.5 pl-12 pr-4 text-on-surface-variant cursor-not-allowed opacity-60 font-medium" type="text" />
+                </div>
+                <div class="text-label-sm text-primary font-medium flex items-center gap-1.5 mt-1">
+                  <span class="material-symbols-outlined text-[16px]">account_balance_wallet</span>
+                  <span>Saldo actual: S/. {{ service.currentBalance() | number: '1.2-2' }}</span>
+                </div>
+              </div>
+
+              <!-- Destination Phone -->
+              <div class="flex flex-col gap-2">
+                <label class="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Celular de Destino</label>
+                <div class="relative">
+                  <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2" [class.text-primary]="transferForm.get('destinationPhone')?.valid" [class.text-outline]="!transferForm.get('destinationPhone')?.valid">contact_phone</span>
+                  <input formControlName="destinationPhone" class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-headline-md font-headline font-bold text-on-surface focus:ring-primary-container" type="text" placeholder="Ej. 912345678" maxlength="9" />
+                </div>
+
+                <!-- Validation indicators -->
+                @if (transferForm.get('destinationPhone')?.touched && transferForm.get('destinationPhone')?.invalid) {
+                  <span class="text-label-sm text-red-400 font-medium flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
+                    <span class="material-symbols-outlined text-[16px]">cancel</span>
+                    El celular debe tener 9 dígitos y empezar con 9
+                  </span>
+                } @else if (transferForm.get('destinationPhone')?.valid) {
+                  <span class="text-label-sm text-tertiary font-medium flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
+                    <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                    Formato de celular correcto
+                  </span>
+                } @else {
+                  <span class="text-label-sm text-on-surface-variant">Ingrese un número de celular de Yape activo (9 dígitos)</span>
+                }
+              </div>
+            </div>
+
+            <!-- Amount (S/.) -->
+            <div class="flex flex-col gap-2">
+              <label class="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Monto a Enviar (S/.)</label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-numeral-xl font-headline font-black text-primary">S/.</span>
+                <input formControlName="amount" class="glass-input w-full rounded-xl py-4.5 pl-16 pr-4 text-display-lg font-headline font-black text-on-surface focus:ring-primary-container tracking-tight" type="number" step="0.1" min="0.1" />
+              </div>
+
+              <!-- Validation indicators for amount -->
+              @if (transferForm.get('amount')?.touched && transferForm.get('amount')?.invalid) {
+                @if (transferForm.get('amount')?.errors?.['insufficientFunds']) {
+                  <span class="text-label-sm text-red-400 font-medium flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
+                    <span class="material-symbols-outlined text-[16px]">cancel</span>
+                    Fondos insuficientes. Tu saldo disponible es de S/. {{ service.currentBalance() | number: '1.2-2' }}
+                  </span>
+                } @else if (transferForm.get('amount')?.errors?.['min']) {
+                  <span class="text-label-sm text-red-400 font-medium flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
+                    <span class="material-symbols-outlined text-[16px]">cancel</span>
+                    El monto mínimo a yapear es S/. 0.01
+                  </span>
+                } @else {
+                  <span class="text-label-sm text-red-400 font-medium flex items-center gap-1">Monto no válido</span>
+                }
+              } @else {
+                <span class="text-label-sm text-on-surface-variant">¿Cuánto deseas transferir? El límite es tu saldo actual.</span>
+              }
+            </div>
+
+            <!-- Description / Message -->
+            <div class="flex flex-col gap-2">
+              <label class="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Mensaje (Opcional)</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute left-4 top-3 text-outline">edit_note</span>
+                <textarea formControlName="description" class="glass-input w-full rounded-xl py-3 pl-12 pr-4 text-body-md text-on-surface focus:ring-primary-container resize-none" rows="2" placeholder="Añade una descripción o saludo..."></textarea>
+              </div>
+            </div>
+
+            <!-- Submit button -->
+            <button [disabled]="isSubmitting() || transferForm.invalid" class="mt-4 yape-gradient w-full rounded-xl py-4 flex items-center justify-center gap-3 text-on-primary font-headline font-black text-[20px] shadow-[0_8px_30px_rgba(116,34,132,0.4)] hover:shadow-[0_12px_40px_rgba(116,34,132,0.6)] disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all duration-300" type="submit">
+              @if (isSubmitting()) {
+                <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Procesando Yapeo...</span>
+              } @else {
+                <span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">send</span>
+                <span>Yapear al Instante</span>
+              }
+            </button>
+          </form>
+        </div>
+      }
+    </div>
+
+    <!-- Right Sidebar - Quick Contacts (Span 1) -->
+    <div class="md:col-span-1">
+      <div class="glass-panel rounded-2xl p-6 shadow-xl flex flex-col h-full">
+        <h3 class="text-headline-md font-headline font-bold text-on-surface border-b border-outline-variant/10 pb-4 mb-4">
+          Contactos Rápidos
+        </h3>
+        
+        <p class="text-label-sm text-on-surface-variant mb-4">
+          Presiona un contacto para rellenar automáticamente sus datos de destino:
+        </p>
+
+        <div class="flex flex-col gap-3">
+          @for (c of quickContacts; track c.phone) {
+            <button (click)="selectContact(c.phone)" class="flex items-center gap-4 p-3 rounded-xl hover:bg-surface-variant/50 border border-transparent hover:border-outline-variant/20 group w-full text-left transition-all">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center font-headline font-bold group-hover:scale-105 transition-transform" [class]="c.colorClass">
+                {{ c.initials }}
+              </div>
+              <div>
+                <p class="text-label-lg font-bold text-on-surface group-hover:text-primary transition-colors">{{ c.name }}</p>
+                <p class="text-label-sm text-on-surface-variant">{{ c.phone }}</p>
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="utf-8">
+  <title>Yape BCP - Fintech Web</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Google Fonts & Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f7acff",
+            "primary-container": "#742284", // Yape's purple!
+            "on-primary": "#570067",
+            "on-primary-container": "#f196fd",
+            "background": "#111415",
+            "surface": "#111415",
+            "surface-bright": "#373a3b",
+            "surface-container": "#1d2021",
+            "surface-container-high": "#282a2b",
+            "surface-container-highest": "#323536",
+            "on-surface": "#e1e3e4",
+            "on-surface-variant": "#d3c1d0",
+            "tertiary": "#00e0b3", // Yape's green/teal!
+            "tertiary-container": "#005341",
+            "on-tertiary": "#00382b",
+            "on-tertiary-container": "#00d0a6",
+            "error": "#ffb4ab",
+            "error-container": "#93000a",
+            "on-error": "#690005",
+            "on-error-container": "#ffdad6",
+            "outline": "#9b8c9a",
+            "outline-variant": "#4f434f"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            headline: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #120317; /* Level 0 Base from BCP guidelines */
+      color: #e1e3e4;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .glass-panel {
+      background-color: rgba(31, 10, 38, 0.6); /* Level 1 Base */
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .glow-active {
+      box-shadow: 0 0 4px rgba(247, 172, 255, 0.5), 0 0 24px rgba(247, 172, 255, 0.1);
+    }
+    
+    .yape-card-bg {
+      background: linear-gradient(135deg, rgba(116, 34, 132, 0.2) 0%, transparent 100%), #1F0A26;
+    }
+    
+    .yape-gradient {
+      background: linear-gradient(135deg, #742284 0%, #350040 100%);
+    }
+
+    /* Custom scrollbar for premium look */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #111415;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #282a2b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #742284;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+  <app-root></app-root>
+</body>
+</html>
+

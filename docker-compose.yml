@@ -29,6 +29,19 @@ services:
     networks:
       - yape-network
 
+  yape-frontend:
+    build:
+      context: ./yape-frontend
+      dockerfile: Dockerfile
+    container_name: yape-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - m1-rest
+    networks:
+      - yape-network
+
 networks:
   yape-network:
     driver: bridge
+

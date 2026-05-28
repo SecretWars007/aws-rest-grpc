@@ -1,0 +1,69 @@
+<div class="flex h-screen w-screen overflow-hidden bg-background font-sans antialiased text-on-surface select-none">
+  <!-- Left Sidebar (Shared Layout Shell) -->
+  <aside class="hidden md:flex flex-col h-screen w-64 border-r border-outline-variant/10 shadow-2xl bg-surface-container py-6 px-4 z-50 flex-shrink-0">
+    <!-- Brand Title -->
+    <div class="flex items-center gap-3.5 mb-10 px-2">
+      <!-- Brand Logo representation -->
+      <div class="w-11 h-11 rounded-xl yape-gradient flex items-center justify-center shadow-lg shadow-[rgba(116,34,132,0.3)]">
+        <span class="material-symbols-outlined text-white text-[24px]" style="font-variation-settings: 'FILL' 1;">send_to_mobile</span>
+      </div>
+      <div>
+        <h1 class="text-headline-md font-headline font-black text-primary leading-tight">Yape BCP</h1>
+        <p class="text-label-sm text-on-surface-variant leading-none">Finanzas Digitales</p>
+      </div>
+    </div>
+
+    <!-- Navigation List -->
+    <nav class="flex-1 flex flex-col gap-1">
+      <!-- Dashboard component link -->
+      <a routerLink="/dashboard" routerLinkActive="text-primary font-bold border-r-2 border-primary bg-primary-container/10" [routerLinkActiveOptions]="{exact: true}" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-on-surface-variant font-medium hover:bg-primary-container/20 hover:text-primary transition-all duration-200">
+        <span class="material-symbols-outlined text-[22px]">dashboard</span>
+        <span class="font-headline text-body-md font-semibold">Dashboard</span>
+      </a>
+
+      <!-- Yapear component link -->
+      <a routerLink="/yapear" routerLinkActive="text-primary font-bold border-r-2 border-primary bg-primary-container/10" class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-on-surface-variant font-medium hover:bg-primary-container/20 hover:text-primary transition-all duration-200">
+        <span class="material-symbols-outlined text-[22px]">send_to_mobile</span>
+        <span class="font-headline text-body-md font-semibold">Yapear</span>
+      </a>
+
+      <!-- Inactive items placeholder -->
+      <div class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-on-surface-variant/40 font-medium cursor-not-allowed">
+        <span class="material-symbols-outlined text-[22px]">history</span>
+        <span class="font-headline text-body-md font-semibold">Historial</span>
+      </div>
+
+      <div class="flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-on-surface-variant/40 font-medium cursor-not-allowed">
+        <span class="material-symbols-outlined text-[22px]">person</span>
+        <span class="font-headline text-body-md font-semibold">Mi Cuenta</span>
+      </div>
+    </nav>
+
+    <!-- Quick action button -->
+    <div class="mb-6 px-1">
+      <a routerLink="/yapear" class="w-full py-3.5 rounded-xl yape-gradient text-on-primary font-bold text-center block shadow-[0_4px_14px_rgba(116,34,132,0.4)] hover:shadow-[0_6px_20px_rgba(116,34,132,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
+        <span class="flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">add</span>
+          Nuevo Yapeo
+        </span>
+      </a>
+    </div>
+
+    <!-- User Profile Footer -->
+    <div class="border-t border-outline-variant/10 pt-4 flex items-center gap-3.5 px-2">
+      <div class="w-10 h-10 rounded-full yape-gradient text-on-primary flex items-center justify-center font-headline font-extrabold text-body-lg shadow-md">
+        JP
+      </div>
+      <div class="overflow-hidden flex-1">
+        <h4 class="text-label-lg font-bold text-on-surface truncate leading-tight">{{ service.sourceName() }}</h4>
+        <p class="text-label-sm text-on-surface-variant truncate leading-none mt-0.5">{{ service.sourcePhone() }}</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main view wrapper -->
+  <div class="flex-1 h-screen bg-background overflow-hidden relative flex flex-col">
+    <!-- Router outlet rendering current active component -->
+    <router-outlet></router-outlet>
+  </div>
+</div>

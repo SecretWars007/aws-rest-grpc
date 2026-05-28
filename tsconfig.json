@@ -9,5 +9,11 @@
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src"
-  }
+  },
+  "files": [],
+  "references": [
+    { "path": "./m1-rest" },
+    { "path": "./m2-grpc" },
+    { "path": "./yape-frontend" }
+  ]
 }
